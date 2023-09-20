@@ -1,25 +1,19 @@
-import { useState, useEffect } from "react";
-import { Button, Input } from "@nextui-org/react";
+import { useState, useContext } from "react";
+import { Button, Input, input } from "@nextui-org/react";
 import { Plus } from "lucide-react";
+import { TodoContext } from "./Todo-Context";
 
 export const Search = () => {
-  const [todos, setTodos] = useState([]);
+  const { todos, setTodos } = useContext(TodoContext);
   const [inputValue, setInputValue] = useState("");
 
-  useEffect(() => {
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
-      console.log(JSON.parse(storedTodos))
-    }
-  }, []);
-  
   const handleAddTodo = () => {
-    const newTodos = [...todos, inputValue];
-    setTodos(newTodos);
-    console.log(newTodos)
-    localStorage.setItem("todos", JSON.stringify(newTodos));
-    setInputValue("");
+    if (inputValue !== "" ) {
+      const newTodos = [...todos, { text: inputValue, isDone: false }];
+      setTodos(newTodos);
+      localStorage.setItem("todos", JSON.stringify(newTodos));
+      setInputValue("");
+    }
   };
 
   return (
@@ -33,8 +27,14 @@ export const Search = () => {
             labelPlacement={"outside"}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+           maxLength={26}
           />
-          <Button size="sm" radius="md" className="h-full " onClick={handleAddTodo}>
+          <Button
+            size="sm"
+            radius="md"
+            className="h-full "
+            onClick={handleAddTodo}
+          >
             <Plus size={20} />
           </Button>
         </div>
